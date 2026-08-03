@@ -80,6 +80,7 @@ def parse_post(path):
         "tipo": meta["tipo"],
         "meta": meta,
         "body_html": md_to_html(body),
+        "mtime": path.stat().st_mtime,
     }
 
 
@@ -174,7 +175,7 @@ def build():
         return
 
     posts = [parse_post(p) for p in md_files]
-    posts.sort(key=lambda p: (p["data"], p["slug"]), reverse=True)
+    posts.sort(key=lambda p: (p["data"], p["mtime"]), reverse=True)
 
     if POST_DIR.exists():
         shutil.rmtree(POST_DIR)
