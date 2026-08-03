@@ -8,6 +8,7 @@ Legge i file .md in contenuti/, genera:
 Uso: python script/build.py
 """
 import re
+import shutil
 from datetime import datetime
 from pathlib import Path
 
@@ -174,6 +175,10 @@ def build():
 
     posts = [parse_post(p) for p in md_files]
     posts.sort(key=lambda p: (p["data"], p["slug"]), reverse=True)
+
+    if POST_DIR.exists():
+        shutil.rmtree(POST_DIR)
+    POST_DIR.mkdir(parents=True, exist_ok=True)
 
     back_link = '<p class="back-link"><a href="/">&larr; tutti i contenuti</a></p>'
     for post in posts:
