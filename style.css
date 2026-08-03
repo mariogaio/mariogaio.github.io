@@ -1,0 +1,146 @@
+:root {
+  --bg: #faf9f6;
+  --text: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --accent: #b5502d;
+  --rule: #e4e1d8;
+  --max-width: 640px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "IBM Plex Mono",
+    Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.site-header {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1.25rem 1rem;
+}
+
+.site-header a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.feed {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.25rem 2rem;
+}
+
+.post {
+  padding: 2rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+.post:first-child {
+  border-top: none;
+  padding-top: 0.5rem;
+}
+
+.post-date {
+  margin: 0 0 0.9rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.post-date a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.post-date a:hover {
+  text-decoration: underline;
+}
+
+.post-body p {
+  margin: 0 0 1em;
+}
+
+.post-body p:last-child {
+  margin-bottom: 0;
+}
+
+.post-body a {
+  color: var(--accent);
+}
+
+.post-media {
+  margin: 0 0 1rem;
+}
+
+.post-media img,
+.post-media video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+
+.post-media--embed {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+
+.post-media--embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.back-link {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.25rem 3rem;
+}
+
+.back-link a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.back-link a:hover {
+  color: var(--accent);
+}
+
+.site-footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem 1.25rem 3rem;
+  border-top: 1px solid var(--rule);
+}
+
+.archive {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.archive-label {
+  margin-right: 0.5em;
+}
+
+.archive a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.archive a:hover {
+  color: var(--accent);
+}
