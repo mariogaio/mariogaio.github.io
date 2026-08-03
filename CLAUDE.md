@@ -1,0 +1,49 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## What this is
+
+A static, framework-free personal site: a single reverse-chronological scroll of daily content (text, photo, or video), each entry also reachable at its own permalink. No CMS, no database, no build tooling beyond one Python script. Hosted on GitHub Pages at `mariogaio.github.io` (a user-page repo, so all asset/link paths in generated HTML are root-relative, e.g. `/style.css`, `/assets/img/...`).
+
+## Commands
+
+Regenerate the site after adding/editing/removing anything in `contenuti/`:
+
+```bash
+python script/build.py
+```
+
+This is the only build step. It reads every `contenuti/*.md`, rewrites `index.html`, and fully regenerates `post/` (the whole directory is deleted and rebuilt each run, so removed posts don't leave orphaned permalink pages).
+
+Local preview: any static file server pointed at the repo root, e.g. `python -m http.server 8422`.
+
+There is no test suite, linter, or package manager — the generator has zero dependencies (Python stdlib only).
+
+## Publishing a new post
+
+1. Create `contenuti/YYYY-MM-DD-slug.md` (the filename stem becomes the permalink slug: `/post/<slug>/`). Frontmatter fields:
+   - `data`: `YYYY-MM-DD` (drives both sort order and the displayed Italian date)
+   - `tipo`: `testo` | `foto` | `video`
+   - `immagine` (tipo `foto`): filename under `assets/img/`
+   - `alt` (tipo `foto`): alt text
+   - `video` (tipo `video`): either an `http...` embed URL (rendered as a 16:9 iframe) or a filename under `assets/video/` (rendered as `<video>`)
+2. Body is the markdown content (caption for foto/video, full text for testo).
+3. Save any media into `assets/img/` or `assets/video/`.
+4. Run `python script/build.py`.
+5. Commit and push — GitHub Pages deploys automatically from `master`.
+
+## Architecture
+
+Everything generation-related lives in `script/build.py` as a single linear pipeline — there's no templating engine or multi-file module structure to navigate:
+
+- `parse_post()` — splits frontmatter from body via one regex, does no YAML parsing (just `key: value` per line)
+- `md_to_html()` — a deliberately minimal hand-rolled markdown converter: paragraphs on blank lines, `**bold**`, `*italic*`, `[text](url)` links, single `\n` → `<br>`. Nothing else is supported (no lists, headings, blockquotes, code) — extend the regex chain here if a post needs more.
+- `render_media()` — the only place that branches on `tipo`; produces the `<figure>` markup for foto/video posts
+- `render_article()` — shared between the home feed and permalink pages; the `permalink` flag controls whether the date is a link (feed) or plain text (permalink page itself)
+- `page_shell()` — the single HTML document template (used for both `index.html` and every `post/<slug>/index.html`)
+- `build()` — orchestrates: parse all posts, sort by `data` desc, wipe+regenerate `post/`, write `index.html`
+
+`style.css` is hand-maintained, not generated. It defines the whole visual language: system monospace font stack (no external font loading), light theme (`--bg`/`--text`/`--accent` custom properties), max-width `640px` centered column, minimal rule-line separators between posts (no cards/shadows). `SITE_TITLE` in `build.py` is the only other place site-wide text lives (used in the header and in `<title>`).
+
+`.nojekyll` at the root disables GitHub Pages' Jekyll processing — required since this is plain generated HTML, not a Jekyll site.
