@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CONTENUTI_DIR = ROOT / "contenuti"
 POST_DIR = ROOT / "post"
 
-SITE_TITLE = "Appunti pubblici"
+SITE_TITLE = "Appunti pubblici di Mario Gaio"
 
 MESI_IT = {
     1: "gennaio", 2: "febbraio", 3: "marzo", 4: "aprile",
