@@ -28,11 +28,34 @@ body {
   padding: 2rem 1.25rem 1rem;
 }
 
-.site-header a {
+.site-title {
   color: var(--text);
   text-decoration: none;
   font-size: 0.95rem;
   letter-spacing: 0.02em;
+}
+
+.site-nav {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.site-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-right: 1rem;
+}
+
+.site-nav a:hover {
+  color: var(--accent);
+}
+
+.about-page p {
+  margin: 0 0 1em;
+}
+
+.about-page a {
+  color: var(--accent);
 }
 
 .feed {

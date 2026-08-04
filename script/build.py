@@ -17,6 +17,8 @@ CONTENUTI_DIR = ROOT / "contenuti"
 POST_DIR = ROOT / "post"
 
 SITE_TITLE = "Appunti pubblici di Mario Gaio"
+ABOUT_TEXT = "Gli appunti che lascio qui alimentano la parte destra del mio cervello."
+ABOUT_EMAIL = "mariogaio.it@gmail.com"
 
 MESI_IT = {
     1: "gennaio", 2: "febbraio", 3: "marzo", 4: "aprile",
@@ -138,7 +140,10 @@ def page_shell(title, body_html, footer_html):
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<header class="site-header"><a href="/">{SITE_TITLE}</a></header>
+<header class="site-header">
+  <a href="/" class="site-title">{SITE_TITLE}</a>
+  <nav class="site-nav"><a href="/">Home</a><a href="/about/">About me</a></nav>
+</header>
 <main class="feed">
 {body_html}
 </main>
@@ -166,6 +171,18 @@ def render_archive(posts):
     {" &middot; ".join(items)}
   </nav>
 </footer>"""
+
+
+def build_about():
+    body = f"""<div class="about-page">
+  <p>{escape_html(ABOUT_TEXT)}</p>
+  <p><a href="mailto:{ABOUT_EMAIL}">{ABOUT_EMAIL}</a></p>
+</div>"""
+    back_link = '<p class="back-link"><a href="/">&larr; tutti i contenuti</a></p>'
+    page = page_shell(f"About me — {SITE_TITLE}", body, back_link)
+    out_dir = ROOT / "about"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "index.html").write_text(page, encoding="utf-8")
 
 
 def build():
@@ -196,7 +213,9 @@ def build():
     index_page = page_shell(SITE_TITLE, feed_html, render_archive(posts))
     (ROOT / "index.html").write_text(index_page, encoding="utf-8")
 
-    print(f"Generati {len(posts)} contenuti -> index.html + post/<slug>/index.html")
+    build_about()
+
+    print(f"Generati {len(posts)} contenuti -> index.html + post/<slug>/index.html + about/")
 
 
 if __name__ == "__main__":
