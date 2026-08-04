@@ -101,6 +101,16 @@ body {
   color: var(--accent);
 }
 
+.fonte {
+  margin: 0.9rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.fonte a {
+  color: var(--accent);
+}
+
 .post-media {
   margin: 0 0 1rem;
 }

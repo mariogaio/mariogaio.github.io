@@ -38,6 +38,14 @@ def escape_html(text):
     )
 
 
+def format_inline(text):
+    text = escape_html(text)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"\*(.+?)\*", r"<em>\1</em>", text)
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
+    return text
+
+
 def md_to_html(md):
     md = md.strip()
     if not md:
@@ -48,11 +56,7 @@ def md_to_html(md):
         para = para.strip()
         if not para:
             continue
-        text = escape_html(para)
-        text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
-        text = re.sub(r"\*(.+?)\*", r"<em>\1</em>", text)
-        text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
-        text = text.replace("\n", "<br>\n")
+        text = format_inline(para).replace("\n", "<br>\n")
         html_parts.append(f"<p>{text}</p>")
     return "\n".join(html_parts)
 
@@ -83,6 +87,7 @@ def parse_post(path):
         "tipo": meta["tipo"],
         "meta": meta,
         "body_html": md_to_html(body),
+        "fonte_html": format_inline(meta["fonte"]) if meta.get("fonte") else None,
         "mtime": path.stat().st_mtime,
     }
 
@@ -122,12 +127,16 @@ def render_article(post, permalink=True):
         if permalink
         else post["data_leggibile"]
     )
+    fonte_html = (
+        f'<p class="fonte">{post["fonte_html"]}</p>' if post["fonte_html"] else ""
+    )
     return f"""<article class="post" id="{post['slug']}">
   <p class="post-date">{date_link}</p>
   {media_html}
   <div class="post-body">
     {post['body_html']}
   </div>
+  {fonte_html}
 </article>"""
 
 
