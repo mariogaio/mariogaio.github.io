@@ -50,6 +50,15 @@ body {
   color: var(--accent);
 }
 
+.about-portrait {
+  display: block;
+  width: 220px;
+  max-width: 100%;
+  height: auto;
+  margin: 0 0 1.5rem;
+  border-radius: 2px;
+}
+
 .about-page p {
   margin: 0 0 1em;
 }

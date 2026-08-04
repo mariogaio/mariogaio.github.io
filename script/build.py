@@ -19,6 +19,7 @@ POST_DIR = ROOT / "post"
 SITE_TITLE = "Appunti pubblici di Mario Gaio"
 ABOUT_TEXT = "Gli appunti che lascio qui alimentano la parte destra del mio cervello."
 ABOUT_EMAIL = "mariogaio.it@gmail.com"
+ABOUT_IMAGE = "autoritratto.jpg"
 
 MESI_IT = {
     1: "gennaio", 2: "febbraio", 3: "marzo", 4: "aprile",
@@ -185,6 +186,7 @@ def render_archive(posts):
 
 def build_about():
     body = f"""<div class="about-page">
+  <img class="about-portrait" src="/assets/img/{ABOUT_IMAGE}" alt="Autoritratto a penna" loading="lazy">
   <p>{escape_html(ABOUT_TEXT)}</p>
   <p><a href="mailto:{ABOUT_EMAIL}">{ABOUT_EMAIL}</a></p>
 </div>"""
