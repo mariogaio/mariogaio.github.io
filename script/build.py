@@ -17,6 +17,8 @@ CONTENUTI_DIR = ROOT / "contenuti"
 POST_DIR = ROOT / "post"
 
 SITE_TITLE = "Appunti pubblici di Mario Gaio"
+ABOUT_TEXT = "Gli appunti che lascio qui alimentano la parte destra del mio cervello."
+ABOUT_EMAIL = "mariogaio.it@gmail.com"
 
 MESI_IT = {
     1: "gennaio", 2: "febbraio", 3: "marzo", 4: "aprile",
@@ -36,6 +38,14 @@ def escape_html(text):
     )
 
 
+def format_inline(text):
+    text = escape_html(text)
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"\*(.+?)\*", r"<em>\1</em>", text)
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
+    return text
+
+
 def md_to_html(md):
     md = md.strip()
     if not md:
@@ -46,11 +56,7 @@ def md_to_html(md):
         para = para.strip()
         if not para:
             continue
-        text = escape_html(para)
-        text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
-        text = re.sub(r"\*(.+?)\*", r"<em>\1</em>", text)
-        text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', text)
-        text = text.replace("\n", "<br>\n")
+        text = format_inline(para).replace("\n", "<br>\n")
         html_parts.append(f"<p>{text}</p>")
     return "\n".join(html_parts)
 
@@ -81,6 +87,7 @@ def parse_post(path):
         "tipo": meta["tipo"],
         "meta": meta,
         "body_html": md_to_html(body),
+        "fonte_html": format_inline(meta["fonte"]) if meta.get("fonte") else None,
         "mtime": path.stat().st_mtime,
     }
 
@@ -120,12 +127,16 @@ def render_article(post, permalink=True):
         if permalink
         else post["data_leggibile"]
     )
+    fonte_html = (
+        f'<p class="fonte">{post["fonte_html"]}</p>' if post["fonte_html"] else ""
+    )
     return f"""<article class="post" id="{post['slug']}">
   <p class="post-date">{date_link}</p>
   {media_html}
   <div class="post-body">
     {post['body_html']}
   </div>
+  {fonte_html}
 </article>"""
 
 
@@ -139,7 +150,10 @@ def page_shell(title, body_html, footer_html):
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-<header class="site-header"><a href="/">{SITE_TITLE}</a></header>
+<header class="site-header">
+  <a href="/" class="site-title">{SITE_TITLE}</a>
+  <nav class="site-nav"><a href="/">Home</a><a href="/about/">About me</a></nav>
+</header>
 <main class="feed">
 {body_html}
 </main>
@@ -167,6 +181,18 @@ def render_archive(posts):
     {" &middot; ".join(items)}
   </nav>
 </footer>"""
+
+
+def build_about():
+    body = f"""<div class="about-page">
+  <p>{escape_html(ABOUT_TEXT)}</p>
+  <p><a href="mailto:{ABOUT_EMAIL}">{ABOUT_EMAIL}</a></p>
+</div>"""
+    back_link = '<p class="back-link"><a href="/">&larr; tutti i contenuti</a></p>'
+    page = page_shell(f"About me — {SITE_TITLE}", body, back_link)
+    out_dir = ROOT / "about"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "index.html").write_text(page, encoding="utf-8")
 
 
 def build():
@@ -197,7 +223,9 @@ def build():
     index_page = page_shell(SITE_TITLE, feed_html, render_archive(posts))
     (ROOT / "index.html").write_text(index_page, encoding="utf-8")
 
-    print(f"Generati {len(posts)} contenuti -> index.html + post/<slug>/index.html")
+    build_about()
+
+    print(f"Generati {len(posts)} contenuti -> index.html + post/<slug>/index.html + about/")
 
 
 if __name__ == "__main__":
