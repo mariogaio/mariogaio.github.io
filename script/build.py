@@ -120,18 +120,13 @@ def render_media(post):
     return ""
 
 
-def render_article(post, permalink=True):
+def render_article(post):
     media_html = render_media(post)
-    date_link = (
-        f'<a href="/post/{post["slug"]}/">{post["data_leggibile"]}</a>'
-        if permalink
-        else post["data_leggibile"]
-    )
     fonte_html = (
         f'<p class="fonte">{post["fonte_html"]}</p>' if post["fonte_html"] else ""
     )
     return f"""<article class="post" id="{post['slug']}">
-  <p class="post-date">{date_link}</p>
+  <p class="post-date">{post['data_leggibile']}</p>
   {media_html}
   <div class="post-body">
     {post['body_html']}
@@ -212,14 +207,14 @@ def build():
     for post in posts:
         page = page_shell(
             f"{post['data_leggibile']} — {SITE_TITLE}",
-            render_article(post, permalink=False),
+            render_article(post),
             back_link,
         )
         out_dir = POST_DIR / post["slug"]
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "index.html").write_text(page, encoding="utf-8")
 
-    feed_html = "\n".join(render_article(p, permalink=True) for p in posts)
+    feed_html = "\n".join(render_article(p) for p in posts)
     index_page = page_shell(SITE_TITLE, feed_html, render_archive(posts))
     (ROOT / "index.html").write_text(index_page, encoding="utf-8")
 
