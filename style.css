@@ -114,6 +114,10 @@ body {
   border-radius: 2px;
 }
 
+.post-media img + img {
+  margin-top: 0.5rem;
+}
+
 .post-media--embed {
   position: relative;
   aspect-ratio: 16 / 9;

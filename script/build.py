@@ -96,13 +96,13 @@ def render_media(post):
     meta = post["meta"]
     tipo = post["tipo"]
     if tipo == "foto":
-        immagine = meta.get("immagine", "")
-        alt = escape_html(meta.get("alt", ""))
-        return (
-            f'<figure class="post-media">'
-            f'<img src="/assets/img/{immagine}" alt="{alt}" loading="lazy">'
-            f"</figure>"
-        )
+        immagini = [i.strip() for i in meta.get("immagine", "").split(",") if i.strip()]
+        alt_parts = [a.strip() for a in meta.get("alt", "").split("|")]
+        imgs = []
+        for i, immagine in enumerate(immagini):
+            alt = escape_html(alt_parts[i] if i < len(alt_parts) else alt_parts[-1])
+            imgs.append(f'<img src="/assets/img/{immagine}" alt="{alt}" loading="lazy">')
+        return f'<figure class="post-media">{"".join(imgs)}</figure>'
     if tipo == "video":
         video = meta.get("video", "")
         if video.startswith("http"):

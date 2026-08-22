@@ -25,8 +25,8 @@ There is no test suite, linter, or package manager — the generator has zero de
 1. Create `contenuti/YYYY-MM-DD-slug.md` (the filename stem becomes the permalink slug: `/post/<slug>/`). Frontmatter fields:
    - `data`: `YYYY-MM-DD` (drives both sort order and the displayed Italian date)
    - `tipo`: `testo` | `foto` | `video`
-   - `immagine` (tipo `foto`): filename under `assets/img/`
-   - `alt` (tipo `foto`): alt text
+   - `immagine` (tipo `foto`): filename under `assets/img/`; for more than one image, a comma-separated list (rendered as stacked `<img>`s in one `<figure>`)
+   - `alt` (tipo `foto`): alt text; for multiple images, pipe-separated (`|`) to pair one alt per image in order — if there are fewer alts than images, the last one is reused for the rest
    - `video` (tipo `video`): either an `http...` embed URL (rendered as a 16:9 iframe) or a filename under `assets/video/` (rendered as `<video>`)
    - `fonte` (optional): bibliographic/source attribution, rendered as its own small muted paragraph after the body — don't put this in the body text itself. End it with a period, for consistency across posts.
 2. Body is the markdown content (caption for foto/video, full text for testo). It's fine to leave the body empty for a `foto`/`video` post whose only text is the `fonte`.
