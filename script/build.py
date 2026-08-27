@@ -9,6 +9,7 @@ Uso: python script/build.py
 """
 import re
 import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 
@@ -61,6 +62,31 @@ def md_to_html(md):
     return "\n".join(html_parts)
 
 
+def order_timestamp(path):
+    """Timestamp used to order same-day posts, oldest first.
+
+    Prefers the commit time git first added the file — stable across
+    fresh checkouts/clones (unlike filesystem mtime, which resets and
+    caused same-day posts to reorder randomly between the local and
+    cloud sessions working on this repo). Falls back to filesystem
+    mtime for a file that hasn't been committed yet.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "log", "--follow", "--format=%at", "--", str(path)],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        timestamps = [line for line in result.stdout.splitlines() if line.strip()]
+        if timestamps:
+            return int(timestamps[-1])  # earliest commit that touched this file
+    except (subprocess.CalledProcessError, FileNotFoundError, ValueError):
+        pass
+    return path.stat().st_mtime
+
+
 def parse_post(path):
     raw = path.read_text(encoding="utf-8")
     match = FRONTMATTER_RE.match(raw)
@@ -88,7 +114,7 @@ def parse_post(path):
         "meta": meta,
         "body_html": md_to_html(body),
         "fonte_html": format_inline(meta["fonte"]) if meta.get("fonte") else None,
-        "mtime": path.stat().st_mtime,
+        "order_ts": order_timestamp(path),
     }
 
 
@@ -197,7 +223,7 @@ def build():
         return
 
     posts = [parse_post(p) for p in md_files]
-    posts.sort(key=lambda p: (p["data"], p["mtime"]), reverse=True)
+    posts.sort(key=lambda p: (p["data"], p["order_ts"]), reverse=True)
 
     if POST_DIR.exists():
         shutil.rmtree(POST_DIR)
