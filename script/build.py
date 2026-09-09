@@ -18,7 +18,7 @@ CONTENUTI_DIR = ROOT / "contenuti"
 POST_DIR = ROOT / "post"
 
 SITE_TITLE = "Appunti pubblici"
-ABOUT_TEXT = "Gli appunti che lascio qui alimentano la parte destra del mio cervello."
+ABOUT_TEXT = "Le tracce che lascio qui alimentano la parte destra del mio cervello."
 ABOUT_EMAIL = "mariogaio.it@gmail.com"
 
 MESI_IT = {
